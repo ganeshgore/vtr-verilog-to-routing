@@ -29,9 +29,7 @@ RUN apt-get install -y \
     fontconfig \
     gdb \
     git \
-    gperf
-
-RUN apt-get install -y \
+    gperf \
     libcairo2-dev \
     libgtk-3-dev \
     libevent-dev \
@@ -47,9 +45,7 @@ RUN apt-get install -y \
     time \
     valgrind \
     zip \
-    qt5-default
-
-RUN apt-get install -y \
+    qt5-default \
     clang-format-7 \
     g++-7 \
     gcc-7 \
@@ -63,7 +59,9 @@ RUN apt-get install -y \
     gcc-11 \
     clang-6.0 \
     clang-7 \
-    clang-10
+    clang-10 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install CMake
 WORKDIR /tmp
