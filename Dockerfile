@@ -41,6 +41,7 @@ RUN apt-get install -y \
     libxml++2.6-dev \
     perl \
     python-lxml \
+    python3-pip \
     texinfo \
     time \
     valgrind \
@@ -62,6 +63,8 @@ RUN apt-get install -y \
     clang-10 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install requiremnets.txt
 
 # Install CMake
 WORKDIR /tmp
