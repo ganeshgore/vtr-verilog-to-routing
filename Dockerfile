@@ -1,46 +1,37 @@
-FROM ubuntu:trusty as builder
+FROM ubuntu:20.04 as builder
 
-RUN apt-get update 
-RUN apt-get install -y \
-    software-properties-common
+RUN apt-get update
+RUN apt-get install -y software-properties-common wget
 
 # add auto gpg key other lauchpad ppa
-RUN add-apt-repository ppa:nilarimogard/webupd8
-RUN apt-get update && apt-get install -y \
-    launchpad-getkeys
+RUN add-apt-repository -y ppa:nilarimogard/webupd8
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 
-# add llvm PPA
+# add llvm PPA and keys
 RUN printf "\n\
-deb http://ppa.launchpad.net/george-edison55/precise-backports/ubuntu precise main \n\
-deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu trusty main \n\
-deb https://apt.llvm.org/precise llvm-toolchain-precise-3.6 main \n\
-deb https://apt.llvm.org/trusty llvm-toolchain-trusty-6.0 main \n\
-deb https://apt.llvm.org/trusty llvm-toolchain-trusty-7 main \n\
-deb https://apt.llvm.org/trusty llvm-toolchain-trusty-8 main \n\
+deb http://apt.llvm.org/focal llvm-toolchain-focal-13 main \n\
 " >> /etc/apt/sources.list
-
-# grab llvm keys
-RUN launchpad-getkeys
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
 RUN apt-get update
 RUN apt-get install -y \
-    ninja \
+    ninja-build \
     libssl-dev \
     autoconf \
     automake \
     bash \
     bison \
     binutils \
-    binutils-gold \
     build-essential \
-    ctags \
     curl \
     doxygen \
     flex \
     fontconfig \
     gdb \
     git \
-    gperf \
+    gperf
+
+RUN apt-get install -y \
     libcairo2-dev \
     libgtk-3-dev \
     libevent-dev \
@@ -51,13 +42,14 @@ RUN apt-get install -y \
     libxft-dev \
     libxml++2.6-dev \
     perl \
-    python \
     python-lxml \
     texinfo \
     time \
     valgrind \
     zip \
-    qt5-default \
+    qt5-default
+
+RUN apt-get install -y \
     clang-format-7 \
     g++-7 \
     gcc-7 \
@@ -73,13 +65,13 @@ RUN apt-get install -y \
     clang-7 \
     clang-10
 
-# install CMake
+# Install CMake
 WORKDIR /tmp
 ENV CMAKE=cmake-3.17.0
 RUN curl -s https://cmake.org/files/v3.17/${CMAKE}.tar.gz | tar xvzf -
 RUN cd ${CMAKE} && ./configure && make && make install
 
-# set out workspace
+# Set out workspace
 ENV WORKSPACE=/workspace
 RUN mkdir -p ${WORKSPACE}
 VOLUME ${WORKSPACE}
